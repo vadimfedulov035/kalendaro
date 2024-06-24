@@ -1,0 +1,6 @@
+#!/bin/sh
+
+rm -f /root/ifc-website/.tmp/*
+rm -f /root/ifc-website/website/content/cal/*
+rm -f /root/ifc-website/website/content/date/*
+rm -f /root/ifc-website/website/download/*

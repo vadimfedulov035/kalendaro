@@ -8,120 +8,223 @@
 \usepackage{calculator}
 \usepackage{ifthen}
 \usepackage{datenumber}
+\usepackage{advdate}
 \usepackage{minibox}
+\usepackage{xcolor}
+\usepackage{xparse}
+\usepackage{pgfmath}
 
-\input{datenumberesperanto.ldf}
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans}
 
-\newarray\semajno
-\readarray{semajno}{dimanĉo&lundo&mardo&merkredo&ĵaŭdo&vendredo&sabato}
+\definecolor{Esperanto}{rgb}{0,0.8682,0.1318}
+
+\newcommand\plena{0}  % Generate annual calendar (1) or month (0)
+\newcommand\jaro{2024}  % What year to generate (nothing for eternal calendar)
+\newcommand\monato{6}  % What month to generate (works only with month calendar)
+\newcommand\tago{4}  % What day to highlight (nothing for default look)
+
+\pgfkeyssetvalue{/monatoj/1}{Januaro}
+\pgfkeyssetvalue{/monatoj/2}{Februaro}
+\pgfkeyssetvalue{/monatoj/3}{Marto}
+\pgfkeyssetvalue{/monatoj/4}{Aprilo}
+\pgfkeyssetvalue{/monatoj/5}{Majo}
+\pgfkeyssetvalue{/monatoj/6}{Junio}
+\pgfkeyssetvalue{/monatoj/7}{Sunio}
+\pgfkeyssetvalue{/monatoj/8}{Julio}
+\pgfkeyssetvalue{/monatoj/9}{Aŭgusto}
+\pgfkeyssetvalue{/monatoj/10}{Septembro}
+\pgfkeyssetvalue{/monatoj/11}{Oktobro}
+\pgfkeyssetvalue{/monatoj/12}{Novembro}
+\pgfkeyssetvalue{/monatoj/13}{Decembro}
+
+\newarray\tagsemajno
+\readarray{tagsemajno}{dimanĉo&lundo&mardo&merkredo&ĵaŭdo&vendredo&sabato}
+
+\newarray\astrosemajno
+\readarray{astrosemajno}{Suno ☉&Luno ☾&Marso ♂&Merkuro ☿&Jupitero ♃&Venuso ♀&Saturno ♄}
+
+\input{eo.ldf}
+
+\NewDocumentCommand{\framecolorbox}{oommm}
+ {% #1 = width (optional)
+  % #2 = inner alignment (optional)
+  % #3 = frame color
+  % #4 = background color
+  % #5 = text
+  \IfValueTF{#1}
+   {\IfValueTF{#2}
+	{\fcolorbox{#3}{#4}{\makebox[#1][#2]{#5}}}
+	{\fcolorbox{#3}{#4}{\makebox[#1]{#5}}}%
+   }
+   {\fcolorbox{#3}{#4}{#5}}%
+ }
 
 \newcommand\xsize[2]{\fontsize{#1}{
-    \MULTIPLY{#1}{1.2}{\distanco}
-    \distanco
+	\MULTIPLY{#1}{1.2}{\distanco}
+	\distanco
 }\selectfont#2}
 \newcommand\kromtago[1]{
-    \node at (277/7*6 mm + 10mm + 277mm / 2 / 7, 204mm - 135/4mm) {\Large\textbf{#1}};
-    \node [anchor=west] at (13mm + 277/7*6 mm, 194mm - 135/4mm) {\Large 29};
-    \draw[gray] (277/7*6 mm + 10mm, 200mm - 135/4 mm) -- (287mm, 200mm - 135/4 mm);
+	\node at (277/7*6 mm + 10mm + 277mm / 2 / 7, 204mm - 135/4mm) {\Large #1};
+	\node [anchor=west] at (13mm + 277/7*6 mm, 194mm - 135/4mm) {\Large 29};
+	\draw[gray] (277/7*6 mm + 10mm, 200mm - 135/4 mm) -- (287mm, 200mm - 135/4 mm);
 
-    % Ĉu estas ĉiujara kalendaro?
-    \ifthenelse{\equal{\jaro}{}}{}{
-        \node[gray,anchor=west] at (277/7*6 mm + 13mm, 168mm - 135/4mm) {\thedateday-a de \datemonthname};
-        \nextdate
-    }
+	% Is calendar annual?
+	\ifthenelse{\equal{\jaro}{}}{}{
+		\node[gray,anchor=west] at (277/7*6 mm + 13mm, 170mm - 135/4mm) {\thedateday-a de \datemonthname};
+		\nextdate
+	}
 }
 
-% Lasu ĉi tion esti nenio por havi ĉiujaran kalendaron. Alie, ŝanĝu al la jaro de la kalendaro
-\newcommand\jaro{}
-
-\newcounter{semajnnumero}
+% LEAP YEAR
+\MODULO{\jaro}{4}{\xmodUNU}
+\MODULO{\jaro}{100}{\xmodDU}
+\MODULO{\jaro}{400}{\xmodTRI}
+\ifthenelse{\equal{\xmodUNU}{0}\AND\NOT\equal{\xmodDU}{0}\OR\equal{\xmodTRI}{0}}{
+	\newcommand\superjaro{1}
+}{
+	\newcommand\superjaro{0}
+}
 
 \begin{document}
-    \fontfamily{qag}\selectfont
 
-    % Se ne malplena
-    \ifthenelse{\equal{\jaro}{}}{}{
-        \setdate{\jaro}{1}{1}
-    }
+	% Set date for annual calendar
+	\ifthenelse{\equal{\jaro}{}}{}{
+		\setdate{\jaro}{1}{1}
+	}
+	
+	% Design
+	\newcommand\printu[1]{
+		\begin{tikzpicture}
+			% Background
+			\draw[transparent] (0,0) rectangle (297mm,210mm);
 
-    \foreach \monato in {Januaro,Februaro,Marto,Aprilo,Majo,Junio,Sunio,Julio,Aŭgusto,Septembro,Oktobro,Novembro,Decembro}{
-        \begin{tikzpicture}
-            % Fono
-            \draw[transparent] (0,0) rectangle (297mm,210mm);
+			% Title with month and year
+			\node [anchor=north west,align=left] at (10mm,200mm) {
+				\xsize{80}{\pgfkeysvalueof{/monatoj/#1} \jaro}
+				\hspace{-.5em}
+				\ifthenelse{\equal{\plena}{1}\AND\equal{\pgfkeysvalueof{/monatoj/#1}}{Januaro}\OR\equal{\jaro}{}}{
+					\minibox{
+						\\[-.25em]
+						\xsize{20}{Internacia} \\[.4em]
+						\xsize{20}{Fiksita} \\[.4em]
+						\xsize{20}{Kalendaro}
+					}
+				}{}
+			};
 
-            % Nomo de la monato, eble jaro kaj nomo de la kalendaro
-            \node [anchor=north west,align=left] at (10mm,190mm) {
-                \xsize{80}{\monato{} \jaro}
-                \hspace{-.5em}
-                \ifthenelse{\equal{\monato}{Januaro}\OR\equal{\jaro}{}}{
-                    \minibox{
-                        \\[-.25em]
-                        \xsize{20}{Internacia} \\[.4em]
-                        \xsize{20}{Fiksita} \\[.4em]
-                        \xsize{20}{Kalendaro}
-                    }
-                }{}
-            };
+			% LINES
 
-            % LINIOJ
-            % Vertikalaj linioj
-            \foreach \x in {0,...,7} {
-                %\draw[gray] (10mm + 277/7*\x mm, 145mm) -- (10mm + 277/7*\x mm, 10mm);
-            }
+			% Horizontal lines
+			\foreach \y in {0,...,4} {
+				 \draw[gray] (10mm, 10mm + 135mm - 135/4*\y mm) -- (287mm, 10mm + 135mm - 135/4*\y mm);
+			}
+			% Vertical lines
+			\foreach \x in {0,...,7} {
+				\draw[gray] (10mm + 277/7*\x mm, 145mm) -- (10mm + 277/7*\x mm, 10mm);
+			}
 
-            \foreach \y in {0,...,4} {
-                % Horizontalaj linioj
-                \draw[gray] (10mm, 10mm + 135mm - 135/4*\y mm) -- (287mm, 10mm + 135mm - 135/4*\y mm);
+			% Highlight day
+			\ifthenelse{\equal{\tago}{}}{}{
+				\DIVIDE{\tago}{7}{\semajno}
+				\MODULO{\tago}{7}{\semajntago}
+				\ifthenelse{\equal{\semajntago}{0}}{
+					\renewcommand\semajntago{7}
+				}{}
 
-                % Numero de la semajno
-                \ifthenelse{\y>0}{
-                    \stepcounter{semajnnumero}
-                    \draw[gray,fill=white] (11mm, 10mm + 1.25*135mm - 135/4*\y mm) circle[radius=3mm] node {\thesemajnnumero};
-                }{}
-            }
+				% Horizontal highlight lines 
+				\pgfmathsetmacro\supralinio{5 - ceil(\semajno)}
+				\pgfmathsetmacro\malsupralinio{\supralinio - 1}
 
-            % ALIAJ INFORMOJ
-            % Tago de la semajno
-            \foreach \x in {1,...,7} {
-                \node at (10mm + 277/7*\x mm - 277mm / 2 / 7, 150mm) {\Large\textbf{\semajno(\x)}};
-            }
+				% Vertical hightlight lines
+				\newcommand\dekstralinio{\semajntago}
+				\pgfmathsetmacro\maldekstralinio{\dekstralinio - 1}
 
-            \foreach \n in {0,...,27} {
-                % Tago de la monato
-                \ADD{\n}{1}{\N}
-                \INTEGERDIVISION{\n}{7}{\line}{\xmod}
-                \node [anchor=west] at (15mm + 277/7*\xmod mm, 140mm - 135/4*\line mm) {\large\N};
+				% Handle leap and new year day (29-th) 
+				\ifthenelse{\not\equal{\tago}{29}}{
+					% Horizontal highlight lines
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\maldekstralinio mm - 1, 10mm + 135/4*\supralinio mm) -- (10mm + 277/7*\dekstralinio mm + 1, 10mm + 135/4*\supralinio mm);
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\maldekstralinio mm - 1, 10mm + 135/4*\malsupralinio mm) -- (10mm + 277/7*\dekstralinio mm + 1, 10mm + 135/4*\malsupralinio mm);
+					% Vertical highlight lines
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\maldekstralinio mm, 10mm + 135/4*\malsupralinio mm - 1) -- (10mm + 277/7*\maldekstralinio mm, 10mm + 135/4*\supralinio mm + 1);
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\dekstralinio mm, 10mm + 135/4*\malsupralinio mm - 1) -- (10mm + 277/7*\dekstralinio mm, 10mm + 135/4*\supralinio mm + 1);
+				}{
+					\renewcommand\supralinio{5}
+					\renewcommand\malsupralinio{4}
+					\renewcommand\maldekstralinio{6}
+					\renewcommand\dekstralinio{7}
+					% Horizontal highlight lines (exception)
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\maldekstralinio mm - 1, 27mm + 135/4*\supralinio mm) -- (10mm + 277/7*\dekstralinio mm + 1, 27mm + 135/4*\supralinio mm);
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\maldekstralinio mm - 1, 27mm + 135/4*\malsupralinio mm) -- (10mm + 277/7*\dekstralinio mm + 1, 27mm + 135/4*\malsupralinio mm);
+					% Vertical highlight lines (exception)
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\maldekstralinio mm, 27mm + 135/4*\malsupralinio mm - 1) -- (10mm + 277/7*\maldekstralinio mm, 27mm + 135/4*\supralinio mm + 1);
+					\draw[line width=0.75mm][Esperanto] (10mm + 277/7*\dekstralinio mm, 27mm + 135/4*\malsupralinio mm - 1) -- (10mm + 277/7*\dekstralinio mm, 27mm + 135/4*\supralinio mm + 1);
+				}
+			}
 
-                % Ekvivalenta Gregoria tago
-                \ifthenelse{\equal{\jaro}{}}{}{
-                    \node[gray,anchor=west] at (15mm + 277/7*\xmod mm, 115mm - 135/4*\line mm) {\thedateday-a de \datemonthname};
-                    \nextdate
-                }
-            }
+			% INFORMATION
+			% Day of the week
+			\foreach \x in {1,...,7} {
+				\node at (10mm + 277/7*\x mm - 277mm / 2 / 7, 156mm) {\Large\astrosemajno(\x)};
+			}
+			
+			\foreach \x in {1,...,7} {
+				\node at (10mm + 277/7*\x mm - 277mm / 2 / 7, 150mm) {\Large\tagsemajno(\x)};
+			}
 
-            % KROMTAGOJ
-            % Supertago
-            \ifthenelse{\equal{\monato}{Junio}}{
-                % Ĉu estas superjaro
-                \MODULO{\thedateyear}{4}{\xmodUNU}
-                \MODULO{\thedateyear}{100}{\xmodDU}
-                \MODULO{\thedateyear}{400}{\xmodTRI}
-                \ifthenelse{\equal{\xmodUNU}{0}\AND\NOT\equal{\xmodDU}{0}\OR\equal{\xmodTRI}{0}}{
-                    % Jes
-                    \kromtago{supertago}
-                }{
-                    % Ne
-                    % Sed ĉu estas ĉiujara kalendaro?
-                    \ifthenelse{\equal{\jaro}{}}{
-                        \kromtago{supertago}
-                    }{}
-                }
-            }{}
+			% SUPERDAY SHIFT IN GREGORIAN DAYS
+			% If specified calendar is annual there is no shift
+			\ifthenelse{\equal{\plena}{1}}{}{
+				% Otherwise calculate the shift
+				\ifthenelse{\equal{\superjaro}{1}\AND{#1>6}}{
+				% leap year case after June (month * 28 + 1)
+					\pgfmathsetmacro\aldontagoj{(#1-1)*28+1}
+				}{
+				% ordinary year (month * 28)
+					\pgfmathsetmacro\aldontagoj{(#1-1)*28}
+				}
+				% Add shift day number to date counter
+				\addtocounter{datenumber}{\aldontagoj}%
+				\setdatebynumber{\thedatenumber}%
+			}
 
-            % Jartago
-            \ifthenelse{\equal{\monato}{Decembro}}{
-                \kromtago{jartago}
-            }{}
-        \end{tikzpicture}
-    }
+			% PARALLEL IFC AND GREGORIAN DAYS
+			\foreach \n in {0,...,27} {
+				% IFC day
+				\ADD{\n}{1}{\N}
+				\INTEGERDIVISION{\n}{7}{\line}{\xmod}
+				\node [anchor=west] at (15mm + 277/7*\xmod mm, 140mm - 135/4*\line mm) {\large\N};
+				% Gregorian day
+				\ifthenelse{\equal{\jaro}{}}{}{
+					\node[gray,anchor=west] at (15mm + 277/7*\xmod mm, 115mm - 135/4*\line mm) {\thedateday-a de \datemonthname};
+					\nextdate
+				}
+			}
+
+			% ALL IFC EXTRA DAYS
+
+			% LEAP DAY
+			\ifthenelse{\equal{\superjaro}{1}\AND{\equal}{#1}{6}}{
+			% Only if year is leap
+				\kromtago{supertago}
+			}{}
+			% Always if annual calendar
+			\ifthenelse{\equal{\jaro}{}\AND{\equal}{#1}{6}}{
+				\kromtago{supertago}
+			}{}
+
+			% YEAR DAY
+			\ifthenelse{\equal{#1}{13}}{
+				\kromtago{jartago}
+			}{}
+		\end{tikzpicture}
+		}
+
+	\ifthenelse{\equal{\plena}{1}}{
+		\foreach \m in {1,...,13} {
+			\printu{\m}
+		}
+	}{
+		\printu{\monato}
+	}
 \end{document}

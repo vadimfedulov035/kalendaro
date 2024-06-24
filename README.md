@@ -1,6 +1,23 @@
 # Internacia Fiksita Kalendaro
-Se vi ne scias kio estas la Internacia Fiksita Kalendaro, [legu pri ĝi ĉi tie en Vikipedio](https://eo.wikipedia.org/wiki/Internacia_Fiksita_Kalendaro).
+## Alternative calendar website in Esperanto
+### https://kalendaro.xyz
 
-Ĉi tiu dosiero enhavas kalendarojn por la Internacia Fiksita Kalendaro faritajn en LaTeX. En la dosierujo `kalendaroj/` estas kalendaroj por diversaj jaroj kaj “senfineca kalendaro”, t.e. kalendaro sen specifa jaro, kiu ĉiam funkcios. Vi povas vidi ekzemplojn de la kalendaroj jam ĉi tie en GitHub—simple malfermu la dosierujon kaj tiam alklaku PDFon kaj ĝi montriĝos al vi.
+![cover](https://github.com/vadimfedulov035/kalendaro/raw/main/logo.jpg)
 
-Se vi bezonas kalendaron por jaro, kiu ne ekzistas en tiu dosiero, vi povas tre facile redakti `ifc.tex` por ekhavi tion.
+## Set up website
+```shell
+./programs/setup.sh
+```
+
+You will need to mention:
+1) Webhost
+2) Email (for certificate)
+
+The script is intended to be executed by root user.
+
+## Future plans
+* Translate timezones into Esperanto (./website/js/tz.js -> var TimeZones)
+* Translate to different artifical languages (add mirrors)
+
+## What is it?
+https://www.youtube.com/watch?v=ZWpVQz-Ei30
