@@ -6,7 +6,7 @@
 
 ## Set up website
 ```shell
-./programs/setup.sh
+./setup.sh
 ```
 
 You will need to mention:
