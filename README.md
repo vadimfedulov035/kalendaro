@@ -2,7 +2,7 @@
 ## Alternative calendar website in Esperanto
 ### https://kalendaro.xyz
 
-![cover](https://github.com/vadimfedulov035/kalendaro/raw/main/logo.jpg)
+![cover](logo.jpg)
 
 ## Set up website
 ```shell
