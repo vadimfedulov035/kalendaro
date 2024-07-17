@@ -10,10 +10,10 @@ import (
 	"time"
 )
 
-const Dir string = "/etc/kalendaro"
-const DirC string = "/etc/kalendaro/website/content"
-const DirD string = "/etc/kalendaro/website/download"
-const DirE string = "/etc/kalendaro/eternal"
+const Dir string = "/root/kalendaro"
+const DirC string = "/root/kalendaro/website/content"
+const DirD string = "/root/kalendaro/website/download"
+const DirE string = "/root/kalendaro/eternal"
 
 type Gen struct {
     Months [][2]int
@@ -108,7 +108,7 @@ func getDateI(tzShiftMinutes int) [3]int {
 func showCmd(app string, args ...string) {
 	var stdout, stderr bytes.Buffer
 	cmd := exec.Command(app, args...)
-	cmd.Dir, cmd.Stdout, cmd.Stderr = "/etc/kalendaro", &stdout, &stderr
+	cmd.Dir, cmd.Stdout, cmd.Stderr = "/root/kalendaro", &stdout, &stderr
 	// print output of command
 	cmd.Run()
 	fmt.Println(stdout.String())
@@ -119,7 +119,7 @@ func showCmd(app string, args ...string) {
 func runCmd(app string, args ...string) {
 	var stdout, stderr bytes.Buffer
 	cmd := exec.Command(app, args...)
-	cmd.Dir, cmd.Stdout, cmd.Stderr = "/etc/kalendaro", &stdout, &stderr
+	cmd.Dir, cmd.Stdout, cmd.Stderr = "/root/kalendaro", &stdout, &stderr
 	// print full command
 	fmt.Printf("%s", app)
 	for _, arg := range args {
@@ -249,7 +249,7 @@ func genDays(days [][3]int) {
 			idRaw += fmt.Sprintf("%02d-", day[i])
 		}
 		id := idRaw[:len(idRaw)-1]
-		f := fmt.Sprintf("/etc/kalendaro/.tmp/ifc-%s.png", id)
+		f := fmt.Sprintf("/root/kalendaro/.tmp/ifc-%s.png", id)
 		if _, err := os.Stat(f); err == nil {
 			continue
 		}
@@ -365,18 +365,18 @@ func updateContent(tzDates map[int][3]int, nearest Nearest) {
 	// remove all previous data
 	runCmd("rm", "-rf", "/var/www/kalendaro")
 	// copy all content (globally)
-	runCmd("cp", "-r", "/etc/kalendaro/website", "/var/www/kalendaro")
+	runCmd("cp", "-r", "/root/kalendaro/website", "/var/www/kalendaro")
 	// restart systemctl
 	runCmd("systemctl", "restart", "nginx.service")
 }
 
 // creates temporary directories
 func makeTmpDirs() {
-	os.MkdirAll("/etc/kalendaro/.tmp", os.ModePerm)
-	os.MkdirAll("/etc/kalendaro/website/content", os.ModePerm)
-	os.MkdirAll("/etc/kalendaro/website/content/cal", os.ModePerm)
-	os.MkdirAll("/etc/kalendaro/website/content/date", os.ModePerm)
-	os.MkdirAll("/etc/kalendaro/website/download", os.ModePerm)
+	os.MkdirAll("/root/kalendaro/.tmp", os.ModePerm)
+	os.MkdirAll("/root/kalendaro/website/content", os.ModePerm)
+	os.MkdirAll("/root/kalendaro/website/content/cal", os.ModePerm)
+	os.MkdirAll("/root/kalendaro/website/content/date", os.ModePerm)
+	os.MkdirAll("/root/kalendaro/website/download", os.ModePerm)
 }
 
 func main() {
