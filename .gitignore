@@ -1,4 +1,10 @@
 *.aux
 *.log
 *.synctex.gz
+webhost.txt
+email.txt
 ifc.pdf
+.tmp/
+website/content/cal/*
+website/content/date/*
+website/download/*

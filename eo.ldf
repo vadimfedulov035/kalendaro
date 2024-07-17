@@ -1,0 +1,27 @@
+\ProvidesFile{eo.ldf}
+
+\makeatletter
+
+\def\@datelanguageesperanto{%
+  \def\@dayname{\@daynameesperanto}
+  \def\@monthname{\@monthnameesperanto}%
+  \def\@datedate{\@datedateesperanto}%
+}
+
+\def\@monthnameesperanto#1{%
+  \ifcase#1\or
+    januaro\or februaro\or marto\or aprilo\or majo\or junio\or
+    julio\or aŭgusto\or septembro\or oktobro\or novembro\or decembro\fi}%
+
+\def\@daynameesperanto#1{%
+  \ifcase#1\or
+    lundo\or mardo\or merkredo\or ĵaŭdo\or
+    vendredo\or sabato\or dimanĉo\fi}
+
+\def\@datedateesperanto{la \thedateday-a de \datemonthname, \thedateyear}
+
+\@datelanguageesperanto
+
+\makeatother
+
+\endinput
