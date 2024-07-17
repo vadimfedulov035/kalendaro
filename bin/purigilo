@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 procent=$(df /dev/sda1 | tail -n1 | awk '{print $5}' | tr -d %)
-if [ $procent -gt 90 ]; then
+if [[ $1 == "-f" ]] || [ $procent -gt 90 ]; then
 	rm -f /root/kalendaro/.tmp/*
 	rm -f /root/kalendaro/website/content/cal/*
 	rm -f /root/kalendaro/website/content/date/*

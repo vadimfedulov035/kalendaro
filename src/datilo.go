@@ -284,7 +284,6 @@ func genMonths(months [][2]int) {
 		}
 		id := idRaw[:len(idRaw)-1]
 		f := fmt.Sprintf("%s/.tmp/ifc-month-%s.pdf", Dir, id)
-		fmt.Printf(f)
 		if _, err := os.Stat(f); err == nil {
 			continue
 		}
