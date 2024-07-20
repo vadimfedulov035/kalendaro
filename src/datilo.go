@@ -34,7 +34,7 @@ func isLeap(year int) bool {
 	return leap
 }
 
-// calculates day from Gregorian date
+// calculate day from Gregorian date
 func calcDay(month int, monthDay int, leap bool) int {
 	// set month days
 	monthDays := [12]int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
@@ -50,7 +50,7 @@ func calcDay(month int, monthDay int, leap bool) int {
 	return day
 }
 
-// calculates IFC date from day
+// calculate IFC date from day
 func calcDateI(day int, leap bool) (int, int) {
 	const leapDay = 169
 	yearDay := 365
@@ -86,7 +86,7 @@ func calcDateI(day int, leap bool) (int, int) {
 	return month, monthDay
 }
 
-// returns IFC date as Date struct
+// return IFC date as Date struct
 func getDateI(tzShiftMinutes int) [3]int {
 	place := time.FixedZone("UTC", tzShiftMinutes * 60)
 	timestamp := time.Now().In(place)
@@ -145,7 +145,7 @@ func setTzDates(tzShifts [38]int, tzDates map[int][3]int) {
 	}
 }
 
-// get unique dates from timezone dates
+// get unique dates to generate
 func getUniqueDays(tzShifts [38]int, tzDates map[int][3]int) [][3]int {
 	unique := make(map[[3]int]bool, 3)
 	var uDays [][3]int
@@ -160,7 +160,7 @@ func getUniqueDays(tzShifts [38]int, tzDates map[int][3]int) [][3]int {
     	return uDays
 }
 
-// get unique months
+// get unique months to generate
 func getUniqueMonths(months [][2]int) [][2]int {
 	unique := make(map[[2]int]bool)
 	var uMonths [][2]int
@@ -173,7 +173,7 @@ func getUniqueMonths(months [][2]int) [][2]int {
 	return uMonths
 }
 
-// get unique years
+// get unique years to generate
 func getUniqueYears(years []int) []int {
 	unique := make(map[int]bool)
 	var uYears []int
@@ -186,7 +186,7 @@ func getUniqueYears(years []int) []int {
 	return uYears
 }
 
-// get nearest months and years to unique dates
+// get nearest to generate
 func getNearest(uDates [][3]int) Nearest {
 	// initialize outer maps
 	months := make(map[[3]int]map[int][2]int)
@@ -215,7 +215,7 @@ func getNearest(uDates [][3]int) Nearest {
 	return nearest
 }
 
-// get all months and years from nearest to generate
+// get all to generate
 func getGen(uDates [][3]int, nearest Nearest) Gen {
 	var monthsGen [][2]int
 	var yearsGen []int
@@ -229,6 +229,7 @@ func getGen(uDates [][3]int, nearest Nearest) Gen {
 	return gen
 }
 
+// get date description
 func getDescription(dates [3]int) string {
 	month, day := dates[1], dates[2]
 	monthNamesI := [13]string{"januaro", "februaro", "marto",
@@ -369,7 +370,7 @@ func updateContent(tzDates map[int][3]int, nearest Nearest) {
 	runCmd("systemctl", "restart", "nginx.service")
 }
 
-// creates temporary directories
+// make temporary directories
 func makeTmpDirs() {
 	os.MkdirAll("/root/kalendaro/.tmp", os.ModePerm)
 	os.MkdirAll("/root/kalendaro/website/content", os.ModePerm)
