@@ -15,16 +15,6 @@ You will need to mention:
 
 The script is intended to be executed by root in /root/kalendaro
 
-## Set up crontab
-```shell
-apt update
-apt install cron -y
-crontab -e
-"*/5 * * * * /usr/local/bin/datilo"
-"0 * * * * /usr/local/bin/purigilo"
-"0 0 1 * * certbot renew"
-```
-
 ## Roadmap
 * Translate timezones into Esperanto (./website/js/tz.js -> var TimeZones)
 * Translate to different artifical languages (add mirrors)

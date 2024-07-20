@@ -46,7 +46,7 @@ apt update && apt upgrade -y
 apt install locales -y
 apt install nginx certbot python3-certbot-nginx -y
 apt install texlive texlive-xetex -y
-apt install poppler-utils cron figlet -y
+apt install cron poppler-utils figlet -y
 apt autoremove -y && apt clean -y
 
 ###############################################################################
