@@ -81,15 +81,5 @@ mkdir /var/www/kalendaro
 #           \____|_| \_\\___/|_| \_| |____/|_____| |_|  \___/|_|              #
 ###############################################################################
 
-crontab_content=$(cat /etc/crontab)
-cronjobs=(
-	"*/5 * * * * /usr/local/bin/datilo"
-	"0 * * * * /usr/local/bin/purigilo"
-	"0 0 1 * * certbot renew"
-)
-set -f
-for cronjob in "${cronjobs[@]}"; do
-	if ! echo "$crontab_content" | grep -q "^$cronjob"; then
-		echo $cronjob >> /etc/crontab
-	fi
-done
+cp /root/kalendaro/conf/crontab /etc/cron.d/kalendaro
+systemctl restart cron
